@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정승리 - 모험가의 아카이브</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <style>
+        /* --- 1. 기본 설정 (Reset & Variables) --- */
+        :root {
+            --bg-color: #f9f9f9;
+            --window-bg: #ffffff;
+            --text-main: #1a1a1a;
+            --text-sub: #555555;
+            --border-style: 2px solid #000;
+            --point-blue: #3b82f6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* --- 2. 상단 프로필 섹션 --- */
+        .profile-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 20px;
+            border-bottom: var(--border-style);
+            gap: 20px;
+        }
+
+        .identity .birth {
+            font-size: 14px; font-weight: 700; background: #000; color: #fff; 
+            padding: 4px 10px; border-radius: 20px; letter-spacing: 1px;
+        }
+        .name {
+            font-size: 64px; font-weight: 900; letter-spacing: -2px; line-height: 1.1; margin: 10px 0;
+            text-transform: uppercase;
+        }
+        .job-title { font-size: 24px; font-weight: 800; color: var(--text-sub); }
+        .contact { font-size: 14px; font-family: monospace; color: #777; margin-top: 5px;}
+
+        .introduction h3 { font-size: 22px; font-weight: 700; margin: 20px 0 10px; line-height: 1.4; }
+        .introduction p { font-size: 15px; color: var(--text-sub); max-width: 500px; word-break: keep-all; }
+
+        /* [수정] 취미와 해시태그 수직 정렬 스타일 */
+        .details { 
+            display: flex; 
+            flex-direction: column; /* 위아래로 쌓이게 변경 */
+            gap: 15px; 
+            margin-top: 20px; 
+            align-items: flex-start; 
+        }
+        .hobbies p { font-size: 14px; color: #444; line-height: 1.8; }
+        .hashtags { display: flex; gap: 8px; flex-wrap: wrap; }
+        .hashtags span { 
+            font-size: 13px; font-weight: 600; color: #000; 
+            border: 1px solid #ddd; padding: 4px 10px; border-radius: 6px; 
+        }
+
+        /* 이미지 영역 */
+        .profile-image-container {
+            width: 200px; height: 200px;
+            border: var(--border-style);
+            border-radius: 50%;
+            overflow: hidden;
+            background: #eee;
+            flex-shrink: 0;
+        }
+        .profile-img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* --- 3. 윈도우 스타일 메인 섹션 --- */
+        .window-style {
+            background: var(--window-bg);
+            border: var(--border-style);
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 600px;
+        }
+
+        .window-bar {
+            height: 40px; border-bottom: var(--border-style); background: #f0f0f0;
+            display: flex; align-items: center; justify-content: flex-end; padding: 0 16px; gap: 8px;
+        }
+        .window-btn { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.2); }
+        .window-btn.close { background: #ff5f57; }
+        .window-btn.minimize { background: #ffbd2e; }
+        .window-btn.maximize { background: #28c940; }
+
+        .resume-container { display: flex; height: 100%; flex: 1; }
+
+        /* --- 4. 사이드바 --- */
+        .resume-sidebar {
+            width: 280px;
+            background: #f8f8f8;
+            border-right: var(--border-style);
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            flex-shrink: 0;
+        }
+        .resume-logo h2 { font-size: 40px; font-weight: 900; line-height: 0.8; }
+        .resume-logo h3 { font-size: 24px; font-weight: 300; letter-spacing: 5px; }
+
+        .certificates p { font-size: 14px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;}
+        .certificates p::before { content: '✔'; font-size: 10px; color: var(--point-blue); }
+
+        .skill { margin-bottom: 20px; }
+        .skill-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+        .skill-name.box { 
+            display: inline-block; width: 24px; height: 24px; background: #000; color: #fff; 
+            text-align: center; line-height: 24px; font-size: 14px; font-weight: bold; margin-right: 8px;
+        }
+        .skill-text { font-size: 14px; font-weight: 700; }
+        .progress-bar { width: 100%; height: 8px; background: #ddd; border-radius: 4px; overflow: hidden; }
+        .progress { height: 100%; background: #000; border-radius: 4px; }
+
+        /* --- 5. 메인 콘텐츠 영역 --- */
+        .resume-main { flex: 1; display: flex; flex-direction: column; }
+
+        /* 네비게이션 */
+        .resume-nav { display: flex; border-bottom: var(--border-style); }
+        .nav-item {
+            flex: 1; text-align: center; padding: 15px 0;
+            font-size: 14px; font-weight: 700; color: #888; cursor: pointer;
+            transition: all 0.2s; border-right: 1px solid #eee;
+        }
+        .nav-item:hover { background: #fafafa; color: #000; }
+        .nav-item.active { 
+            background: #fff; color: #000; font-weight: 900; 
+            box-shadow: inset 0 -3px 0 #000;
+        }
+        .nav-item:last-child { border-right: none; }
+
+        /* 콘텐츠 공통 */
+        .content-area {
+            padding: 40px;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .content-area.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .career-header { margin-bottom: 30px; }
+        .career-header h3 { font-size: 28px; font-weight: 900; letter-spacing: -1px; margin-bottom: 5px; }
+        .period { font-size: 14px; color: #666; display: block; }
+
+        /* [수정] Favorites 그리드 레이아웃 스타일 (카드형) */
+        .fav-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .fav-item {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .fav-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-color: #000;
+        }
+        .fav-icon { font-size: 24px; margin-bottom: 5px; }
+        .fav-category { font-size: 12px; font-weight: 700; color: var(--point-blue); text-transform: uppercase; }
+        .fav-title { font-size: 16px; font-weight: 700; word-break: keep-all; line-height: 1.4; }
+
+        /* Q&A 그리드 스타일 */
+        .education-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .edu-item { 
+            background: #f9f9f9; padding: 20px; border: 1px solid #ddd; border-radius: 8px; 
+            transition: transform 0.2s;
+        }
+        .edu-item:hover { transform: translateY(-3px); border-color: #000; }
+        .edu-item h3 { font-size: 16px; margin-bottom: 4px; }
+        .major { font-size: 14px; color: #555; margin-top: 10px; line-height: 1.5; }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            body { padding: 20px 10px; }
+            .profile-section { flex-direction: column-reverse; align-items: flex-start; }
+            .resume-container { flex-direction: column; }
+            .resume-sidebar { width: 100%; border-right: none; border-bottom: var(--border-style); flex-direction: row; flex-wrap: wrap; justify-content: space-between;}
+            .skills { width: 100%; margin-top: 20px; }
+            .fav-grid, .education-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="profile-section">
+            <div class="profile-info-container">
+                <div class="info-header">
+                    <div class="identity">
+                        <span class="birth">Adventurer</span>
+                        <h1 class="name">SEUNGRI</h1>
+                    </div>
+                    <div class="job-contact">
+                        <h2 class="job-title">HOME PROTECTOR</h2>
+                        <p class="contact">ghdorl6465@naver.com</p>
+                    </div>
+                </div>
+                <div class="info-body">
+                    <div class="introduction">
+                        <h3>방구석에서 가장 넓은<br>세상을 모험하는 중</h3>
+                        <p>안녕하세요. 나에게 꼭 맞는 길을 찾아 매일 탐색 중인 정승리입니다. 정적인 공간에서 치열하게 상상하고, 맛있는 디저트와 함께 미래를 고민합니다.</p>
+                    </div>
+                    
+                    <div class="details">
+                        <div class="hobbies">
+                            <p><strong>HOBBIES</strong><br>웹소설 읽기 / 침대에서 뒹굴기 / 디저트 탐방</p>
+                        </div>
+                        <div class="hashtags">
+                            <span>#INTP</span><span>#베짱이</span>
+                            <span>#디저트</span><span>#상상</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="profile-image-container">
+                <img src="victory.png" alt="정승리" class="profile-img" onerror="this.style.display='none'; this.parentNode.style.backgroundColor='#ccc';">
+            </div>
+        </header>
+
+        <section class="resume-section window-style">
+            <div class="window-bar">
+                <span class="window-btn close"></span>
+                <span class="window-btn minimize"></span>
+                <span class="window-btn maximize"></span>
+            </div>
+            
+            <div class="resume-container">
+                <aside class="resume-sidebar">
+                    <div class="resume-logo">
+                        <h2>2025</h2>
+                        <h3>ARCHIVE</h3>
+                    </div>
+                    <div class="certificates">
+                        <p>프로 방구석 모험가</p>
+                        <p>디저트 감별사 1급</p>
+                        <p>상식 지킴이</p>
+                    </div>
+                    
+                    <div class="skills">
+                        <div class="skill">
+                            <div class="skill-header">
+                                <div><span class="skill-name box">H</span> <span class="skill-text">Home</span></div>
+                                <span class="skill-text">99%</span>
+                            </div>
+                            <div class="progress-bar"><div class="progress" style="width: 99%;"></div></div>
+                        </div>
+                        <div class="skill">
+                            <div class="skill-header">
+                                <div><span class="skill-name box">I</span> <span class="skill-text">Imagination</span></div>
+                                <span class="skill-text">95%</span>
+                            </div>
+                            <div class="progress-bar"><div class="progress" style="width: 95%;"></div></div>
+                        </div>
+                        <div class="skill">
+                            <div class="skill-header">
+                                <div><span class="skill-name box">L</span> <span class="skill-text">Logic</span></div>
+                                <span class="skill-text">80%</span>
+                            </div>
+                            <div class="progress-bar"><div class="progress" style="width: 80%;"></div></div>
+                        </div>
+                        <div class="skill">
+                            <div class="skill-header">
+                                <div><span class="skill-name box">D</span> <span class="skill-text">Dessert</span></div>
+                                <span class="skill-text">100%</span>
+                            </div>
+                            <div class="progress-bar"><div class="progress" style="width: 100%;"></div></div>
+                        </div>
+                    </div>
+                </aside>
+
+                <main class="resume-main">
+                    <nav class="resume-nav">
+                        <div class="nav-item active" onclick="openTab('home')">HOME</div>
+                        <div class="nav-item" onclick="openTab('favorites')">FAVORITES</div>
+                        <div class="nav-item" onclick="openTab('tmi')">TMI / Q&A</div>
+                    </nav>
+                    
+                    <div id="home" class="content-area active">
+                        <div class="career-header">
+                            <h3>HELLO, WORLD!</h3>
+                            <span class="period">Visitor Log</span>
+                        </div>
+                        <p style="margin-top:20px; font-size: 16px;">
+                            방구석 모험가의 기록 보관소에 오신 것을 환영합니다.<br><br>
+                            이곳은 저의 취향과 생각들이 차곡차곡 쌓이는 공간입니다.
+                            상단의 탭을 눌러 제가 좋아하는 것들과 사소한 정보들을 확인해보세요.
+                        </p>
+                        <br>
+                        <div style="background:#eee; padding:15px; border-radius:5px; font-size:14px;">
+                            <strong>📢 Update Log</strong><br>
+                            - 2025.12.24: 사이트 리뉴얼 오픈<br>
+                            - 2025.12.24: 디저트 데이터베이스 구축 중
+                        </div>
+                    </div>
+
+                    <div id="favorites" class="content-area">
+                        <div class="career-header">
+                            <h3>MY FAVORITES</h3>
+                            <span class="period">Things I Love</span>
+                        </div>
+                        
+                        <div class="fav-grid">
+                            <div class="fav-item">
+                                <div class="fav-icon">🎄</div>
+                                <span class="fav-category">Music</span>
+                                <span class="fav-title">Good Luck, Babe!<br><span style="font-weight:400; font-size:14px; color:#666;">Chappell Roan</span></span>
+                            </div>
+                            <div class="fav-item">
+                                <div class="fav-icon">🧚</div>
+                                <span class="fav-category">Movie</span>
+                                <span class="fav-title">피터팬 (Peter Pan)<br><span style="font-weight:400; font-size:14px; color:#666;">영원한 네버랜드</span></span>
+                            </div>
+                            <div class="fav-item">
+                                <div class="fav-icon">🐶</div>
+                                <span class="fav-category">Friends</span>
+                                <span class="fav-title">몽이, 감자, 후추<br><span style="font-weight:400; font-size:14px; color:#666;">사랑스러운 친구들</span></span>
+                            </div>
+                            <div class="fav-item">
+                                <div class="fav-icon">🍰</div>
+                                <span class="fav-category">Food</span>
+                                <span class="fav-title">아이스 아메리카노<br><span style="font-weight:400; font-size:14px; color:#666;">& 꾸덕한 초코 케이크</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tmi" class="content-area">
+                        <div class="career-header">
+                            <h3>TOO MUCH INFO</h3>
+                            <span class="period">Interview with Myself</span>
+                        </div>
+                        <div class="education-grid">
+                            <div class="edu-item">
+                                <h3>성격 TMI</h3>
+                                <span class="period">Personality</span>
+                                <p class="major">"1년 내내 집에만 있어도 행복합니다."<br>혼자만의 시간에서 에너지를 충전해요.</p>
+                            </div>
+                            <div class="edu-item">
+                                <h3>관계관</h3>
+                                <span class="period">Relationship</span>
+                                <p class="major">상식과 예의가 통하는 담백한 대화를 좋아합니다. 무례함 없는 관계를 지향해요.</p>
+                            </div>
+                            <div class="edu-item">
+                                <h3>현재 목표</h3>
+                                <span class="period">Goal</span>
+                                <p class="major">나만의 속도로 진로 찾기.<br>조급해하지 않고 천천히 단단해지는 중.</p>
+                            </div>
+                            <div class="edu-item">
+                                <h3>습관</h3>
+                                <span class="period">Habit</span>
+                                <p class="major">하루 종일 소설 읽으며<br>다른 세계 여행하기.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </main>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function openTab(tabName) {
+            var contents = document.getElementsByClassName("content-area");
+            for (var i = 0; i < contents.length; i++) {
+                contents[i].classList.remove("active");
+            }
+            var navItems = document.getElementsByClassName("nav-item");
+            for (var i = 0; i < navItems.length; i++) {
+                navItems[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            event.currentTarget.classList.add("active");
+        }
+    </script>
+</body>
+</html>
